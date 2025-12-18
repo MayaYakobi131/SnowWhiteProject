@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Background -->
+    <ImageView
+        android:id="@+id/main_IMG_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/snow_white_background"
+        android:contentDescription="@null"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Hearts -->
+    <LinearLayout
+        android:id="@+id/hearts_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/main_IMG_heart1"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/heart"
+            android:contentDescription="@string/life_description"/>
+
+        <ImageView
+            android:id="@+id/main_IMG_heart2"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/heart"
+            android:contentDescription="@string/life_description"/>
+
+        <ImageView
+            android:id="@+id/main_IMG_heart3"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/heart"
+            android:contentDescription="@string/life_description"/>
+    </LinearLayout>
+
+    <!-- Lanes container -->
+    <LinearLayout
+        android:id="@+id/lanes_container"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/hearts_container"
+        app:layout_constraintBottom_toTopOf="@id/main_BTN_left"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- LEFT LANE -->
+        <LinearLayout
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="bottom"
+            android:paddingBottom="20dp">
+
+            <View android:id="@+id/mat_0_0" android:layout_width="80dp" android:layout_height="80dp"/>
+            <View android:id="@+id/mat_1_0" android:layout_width="80dp" android:layout_height="80dp"/>
+            <View android:id="@+id/mat_2_0" android:layout_width="80dp" android:layout_height="80dp"/>
+            <View android:id="@+id/mat_3_0" android:layout_width="80dp" android:layout_height="80dp"/>
+            <View android:id="@+id/mat_4_0" android:layout_width="80dp" android:layout_height="80dp"/>
+            <View android:id="@+id/mat_5_0" android:layout_width="80dp" android:layout_height="80dp"/>
+            <View android:id="@+id/mat_6_0" android:layout_width="80dp" android:layout_height="80dp"/>
+        </LinearLayout>
+
+        <!-- MIDDLE LANE -->
+        <LinearLayout
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="bottom"
+            android:paddingBottom="20dp">
+
+            <View android:id="@+id/mat_0_1" android:layout_width="80dp" android:layout_height="80dp"/>
+            <View android:id="@+id/mat_1_1" android:layout_width="80dp" android:layout_height="80dp"/>
+            <View android:id="@+id/mat_2_1" android:layout_width="80dp" android:layout_height="80dp"/>
+            <View android:id="@+id/mat_3_1" android:layout_width="80dp" android:layout_height="80dp"/>
+            <View android:id="@+id/mat_4_1" android:layout_width="80dp" android:layout_height="80dp"/>
+            <View android:id="@+id/mat_5_1" android:layout_width="80dp" android:layout_height="80dp"/>
+            <View android:id="@+id/mat_6_1" android:layout_width="80dp" android:layout_height="80dp"/>
+        </LinearLayout>
+
+        <!-- RIGHT LANE -->
+        <LinearLayout
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="bottom"
+            android:paddingBottom="20dp">
+
+            <View android:id="@+id/mat_0_2" android:layout_width="80dp" android:layout_height="80dp"/>
+            <View android:id="@+id/mat_1_2" android:layout_width="80dp" android:layout_height="80dp"/>
+            <View android:id="@+id/mat_2_2" android:layout_width="80dp" android:layout_height="80dp"/>
+            <View android:id="@+id/mat_3_2" android:layout_width="80dp" android:layout_height="80dp"/>
+            <View android:id="@+id/mat_4_2" android:layout_width="80dp" android:layout_height="80dp"/>
+            <View android:id="@+id/mat_5_2" android:layout_width="80dp" android:layout_height="80dp"/>
+            <View android:id="@+id/mat_6_2" android:layout_width="80dp" android:layout_height="80dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Player -->
+    <ImageView
+        android:id="@+id/main_IMG_player"
+        android:layout_width="@dimen/player_width"
+        android:layout_height="@dimen/player_height"
+        android:src="@drawable/snow_white"
+        android:contentDescription="@string/player_description"
+        app:layout_constraintBottom_toTopOf="@id/main_BTN_left"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Buttons -->
+    <ImageButton
+        android:id="@+id/main_BTN_left"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@drawable/arrow_left"
+        android:backgroundTint="@color/purple_button"
+        android:contentDescription="@string/move_left"
+        app:tint="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="16dp"/>
+
+    <ImageButton
+        android:id="@+id/main_BTN_right"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@drawable/arrow_right"
+        android:backgroundTint="@color/purple_button"
+        android:contentDescription="@string/move_right"
+        app:tint="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

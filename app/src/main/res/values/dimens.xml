@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Screen -->
+    <dimen name="screen_padding">16dp</dimen>
+    <dimen name="default_margin">12dp</dimen>
+
+    <!-- Player -->
+    <dimen name="player_width">140dp</dimen>
+    <dimen name="player_height">140dp</dimen>
+
+    <!-- Hearts -->
+    <dimen name="heart_size">32dp</dimen>
+
+    <!-- Control buttons -->
+    <dimen name="control_button_size">52dp</dimen>
+    <dimen name="control_margin_bottom">24dp</dimen>
+    <dimen name="control_side_margin">16dp</dimen>
+
+    <!-- Matrix -->
+    <dimen name="cell_size">48dp</dimen>
+    <dimen name="matrix_top_margin">72dp</dimen>
+
+</resources>

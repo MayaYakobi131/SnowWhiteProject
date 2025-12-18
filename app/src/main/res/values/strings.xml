@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">SnowWhiteProject</string>
+
+    <string name="game_area_description">Game area</string>
+    <string name="player_description">Snow White</string>
+    <string name="life_description">Life</string>
+
+    <string name="move_left">Move left</string>
+    <string name="move_right">Move right</string>
+
+    <!-- Game config -->
+    <string name="cols_count">3</string>
+    <string name="rows_count">12</string>
+
+    <!-- Game loop -->
+    <string name="tick_ms">500</string>
+    <string name="spawn_every_ticks">3</string>
+
+    <!-- Messages -->
+    <string name="crash_toast">Ouch!</string>
+    <string name="game_over_toast">Game Over</string>
+
+</resources>
