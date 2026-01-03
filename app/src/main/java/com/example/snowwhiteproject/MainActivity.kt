@@ -10,23 +10,28 @@ import android.os.Vibrator
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
 
-    private val ROWS = 7
-    private val COLS = 3
-    private val DELAY = 700L
+    private val ROWS = 9
+    private val COLS = 5
 
-    private lateinit var matrixViews: Array<Array<View>>
-    private val board = Array(ROWS) { IntArray(COLS) }
+    // בשלב הבא זה יקבע מה-Menu (Slow/Fast)
+    private var delayMs: Long = 700L
 
+    private lateinit var matrixViews: Array<Array<ImageView>>
     private lateinit var player: ImageView
     private lateinit var hearts: Array<ImageView>
-    private var playerCol = 1
+    private lateinit var lblDistance: TextView
+    private lateinit var lblScore: TextView
+
+    private var playerCol = 2
     private var lives = 3
+
+    private lateinit var gameManager: GameManager
 
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var gameRunnable: Runnable
@@ -36,9 +41,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        gameManager = GameManager(rows = ROWS, cols = COLS)
+
         initMatrix()
         initViews()
         initButtons()
+
+        resetGame()
         startGame()
     }
 
@@ -49,6 +58,9 @@ class MainActivity : AppCompatActivity() {
             findViewById(R.id.main_IMG_heart2),
             findViewById(R.id.main_IMG_heart3)
         )
+
+        lblDistance = findViewById(R.id.main_LBL_distance)
+        lblScore = findViewById(R.id.main_LBL_score)
     }
 
     private fun initMatrix() {
@@ -62,13 +74,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun initButtons() {
         findViewById<ImageButton>(R.id.main_BTN_left).setOnClickListener {
-            if (playerCol > 0) playerCol--
-            updatePlayerPosition()
+            if (playerCol > 0) {
+                playerCol--
+                updatePlayerPosition()
+            }
         }
 
         findViewById<ImageButton>(R.id.main_BTN_right).setOnClickListener {
-            if (playerCol < COLS - 1) playerCol++
-            updatePlayerPosition()
+            if (playerCol < COLS - 1) {
+                playerCol++
+                updatePlayerPosition()
+            }
         }
     }
 
@@ -78,10 +94,10 @@ class MainActivity : AppCompatActivity() {
             override fun run() {
                 if (!gameRunning) return
                 gameStep()
-                handler.postDelayed(this, DELAY)
+                handler.postDelayed(this, delayMs)
             }
         }
-        handler.postDelayed(gameRunnable, DELAY)
+        handler.postDelayed(gameRunnable, delayMs)
     }
 
     private fun stopGame() {
@@ -90,47 +106,45 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun gameStep() {
-        moveDown()
-        spawnApple()
-        checkCollision()
-        draw()
-    }
+        gameManager.step()
 
-    private fun moveDown() {
-        for (r in ROWS - 1 downTo 1) {
-            for (c in 0 until COLS) {
-                board[r][c] = board[r - 1][c]
+        val collision = gameManager.resolveCollisionAt(playerCol)
+        when (collision) {
+            GameManager.POISON_APPLE -> loseLife()
+            GameManager.COIN -> {
+                // הניקוד עולה ב-GameManager
+                // בשלב הסאונדים נוסיף כאן סאונד מטבע
             }
         }
-        for (c in 0 until COLS) board[0][c] = 0
+
+        draw()
+        updateHud()
     }
 
-    private fun spawnApple() {
-        if (Random.nextBoolean()) {
-            board[0][Random.nextInt(COLS)] = 1
-        }
-    }
-
-    private fun checkCollision() {
-        if (board[ROWS - 1][playerCol] == 1) {
-            board[ROWS - 1][playerCol] = 0
-            loseLife()
-        }
+    private fun updateHud() {
+        lblDistance.text = "Distance: ${gameManager.distance}"
+        lblScore.text = "Score: ${gameManager.score}"
     }
 
     private fun loseLife() {
         crashFeedback()
         lives--
-        if (lives >= 0) hearts[lives].visibility = View.INVISIBLE
+        if (lives >= 0) {
+            hearts[lives].visibility = View.INVISIBLE
+        }
 
         if (lives == 0) {
             stopGame()
-            startActivity(Intent(this, ScoreActivity::class.java))
+            val i = Intent(this, ScoreActivity::class.java)
+            i.putExtra(ScoreActivity.EXTRA_SCORE, gameManager.score)
+            i.putExtra(ScoreActivity.EXTRA_DISTANCE, gameManager.distance)
+            startActivity(i)
         }
     }
 
     override fun onResume() {
         super.onResume()
+        // חוזרים מ-GameOver -> מאפסים ומתחילים מחדש
         if (lives == 0) {
             resetGame()
             startGame()
@@ -141,38 +155,44 @@ class MainActivity : AppCompatActivity() {
         lives = 3
         hearts.forEach { it.visibility = View.VISIBLE }
 
-        for (r in 0 until ROWS)
-            for (c in 0 until COLS)
-                board[r][c] = 0
+        gameManager.clearAll()
 
-        playerCol = 1
+        playerCol = 2
         updatePlayerPosition()
+        updateHud()
+        draw()
     }
 
     private fun draw() {
         for (r in 0 until ROWS) {
             for (c in 0 until COLS) {
-                if (board[r][c] == 1)
-                    matrixViews[r][c].setBackgroundResource(R.drawable.apple)
-                else
-                    matrixViews[r][c].background = null
+                when (gameManager.getCell(r, c)) {
+                    GameManager.POISON_APPLE -> matrixViews[r][c].setImageResource(R.drawable.apple)
+                    GameManager.COIN -> matrixViews[r][c].setImageResource(android.R.drawable.star_big_on) // זמני למטבע
+                    else -> matrixViews[r][c].setImageDrawable(null)
+                }
             }
         }
     }
 
     private fun updatePlayerPosition() {
         val parentWidth = (player.parent as View).width
-        val laneWidth = parentWidth / COLS
+        if (parentWidth == 0) {
+            player.post { updatePlayerPosition() }
+            return
+        }
+        val laneWidth = parentWidth / COLS.toFloat()
         player.x = laneWidth * playerCol + laneWidth / 2f - player.width / 2f
     }
 
     private fun crashFeedback() {
         Toast.makeText(this, "Ouch!", Toast.LENGTH_SHORT).show()
+
         val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         if (vibrator.hasVibrator()) {
             vibrator.vibrate(
                 VibrationEffect.createOneShot(
-                    300,
+                    250,
                     VibrationEffect.DEFAULT_AMPLITUDE
                 )
             )
